@@ -1,7 +1,6 @@
 # Load file with header
-rmsd <- read.delim("SRR701471.annovar.hg38_multianno.exonic.txt", sep = "\t", header = TRUE)
+rmsd <- read.delim("/Users/ms201/OneDrive/Documents/projects/UChicago - MAC-RIBS/BIOS10007-Final/data/SRR701471.annovar.hg38_multianno.exonic.txt", sep = "\t", header = TRUE)
 
-# Check column structure first
 print("Column names:")
 print(colnames(rmsd))
 print("First few rows:")
@@ -64,6 +63,15 @@ text(gene_mutation_data$NumMutations, gene_mutation_data$NumGenes,
 
 # Add regression line
 model <- lm(NumGenes ~ NumMutations, data = gene_mutation_data)
+summary_stats <- summary(model)
+slope <- coef(model)[2]
+conf_int <- confint(model, level = 0.95)
+
+cat("\n=== REGRESSION RESULTS ===\n")
+cat("Slope (β₁):", round(slope, 4), "genes per mutation\n")
+cat("95% CI:", round(conf_int[2,1], 4), "to", round(conf_int[2,2], 4), "\n")
+cat("R²:", round(summary_stats$r.squared, 4), "\n")
+cat("p-value:", format.pval(summary_stats$coefficients[2,4]), "\n")
 abline(model, col = "red", lwd = 2)
 
 # Add R-squared value
