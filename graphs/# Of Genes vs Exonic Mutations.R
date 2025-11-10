@@ -1,5 +1,6 @@
+rm(list = ls())
 # Load file with header
-rmsd <- read.delim("/Users/ms201/OneDrive/Documents/projects/UChicago - MAC-RIBS/BIOS10007-Final/data/SRR701471.annovar.hg38_multianno.exonic.txt", sep = "\t", header = TRUE)
+rmsd <- read.delim("../data/SRR701471.annovar.hg38_multianno.exonic.txt", sep = "\t", header = TRUE)
 
 print("Column names:")
 print(colnames(rmsd))
@@ -67,8 +68,7 @@ summary_stats <- summary(model)
 slope <- coef(model)[2]
 conf_int <- confint(model, level = 0.95)
 
-cat("\n=== REGRESSION RESULTS ===\n")
-cat("Slope (β₁):", round(slope, 4), "genes per mutation\n")
+cat("Slope (β₁):", round(slope, 4), "# of genes per # of exonic mutations\n")
 cat("95% CI:", round(conf_int[2,1], 4), "to", round(conf_int[2,2], 4), "\n")
 cat("R²:", round(summary_stats$r.squared, 4), "\n")
 cat("p-value:", format.pval(summary_stats$coefficients[2,4]), "\n")

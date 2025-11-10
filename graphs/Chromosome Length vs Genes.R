@@ -1,5 +1,7 @@
+rm(list = ls())
+
 # Load file with header
-rmsd <- read.delim("SRR701471.annovar.hg38_multianno.txt", sep = "\t", header = TRUE)
+rmsd <- read.delim("../data/SRR701471.annovar.hg38_multianno.txt", sep = "\t", header = TRUE)
 
 # Define chromosome labels of interest (1–22 and X)
 chromosomes <- paste0("chr", c(1:22, "X"))
@@ -36,8 +38,20 @@ for (chr in chromosomes) {
 
 # Show result
 print(gene_mutation_data)
+model <- lm(NumMutations ~ NumGenes, data = gene_mutation_data)
 
-# Plot with regression
+# Statistics
+summary_stats <- summary(model)
+slope <- coef(model)[2]
+conf_int <- confint(model, level = 0.95)
+r_squared <- summary_stats$r.squared
+
+cat("Slope (β₁):", round(slope, 4), "# of mutations per # of genes\n")
+cat("95% CI:", round(conf_int[2,1], 4), "to", round(conf_int[2,2], 4), "\n")
+cat("R²:", round(r_squared, 4), "\n")
+cat("p-value:", format.pval(summary_stats$coefficients[2,4]), "\n\n")
+
+# Plot graphs
 plot(
   gene_mutation_data$NumGenes, gene_mutation_data$NumMutations,
   pch = 19,
@@ -59,12 +73,10 @@ text(
   col = "darkred"
 )
 
-# Fit regression model
-model <- lm(NumMutations ~ NumGenes, data = gene_mutation_data)
+# Add regression line
 abline(model, col = "red", lwd = 2)
 
-# Calculate and display R-squared
-r_squared <- summary(model)$r.squared
+# Add R-squared to plot
 text(
   x = max(gene_mutation_data$NumGenes) * 0.7,
   y = max(gene_mutation_data$NumMutations) * 0.95,
@@ -73,4 +85,5 @@ text(
   cex = 1.2
 )
 
+# Print full summary
 print(summary(model))

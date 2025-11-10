@@ -1,8 +1,9 @@
+rm(list = ls())
 # Load exonic mutations file
-rmsd_exonic <- read.delim("SRR701471.annovar.hg38_multianno.exonic.txt", sep = "\t", header = TRUE)
+rmsd_exonic <- read.delim("../data/SRR701471.annovar.hg38_multianno.exonic.txt", sep = "\t", header = TRUE)
 
 # Load total mutations file (assuming you have the complete annotation file)
-rmsd_total <- read.delim("SRR701471.annovar.hg38_multianno.txt", sep = "\t", header = TRUE)
+rmsd_total <- read.delim("../data/SRR701471.annovar.hg38_multianno.txt", sep = "\t", header = TRUE)
 
 # Define chromosome labels of interest (1–22 and X)
 chromosomes <- paste0("chr", c(1:22, "X"))
@@ -82,7 +83,15 @@ axis(1, at = x_positions, labels = x_labels, las = 2, cex.axis = 0.8)
 # Add regression line
 model <- lm(PercentExonic ~ ChromosomeNum, data = mutation_percentage_data)
 abline(model, col = "red", lwd = 2)
+summary_stats <- summary(model)
+slope <- coef(model)[2]
+conf_int <- confint(model, level = 0.95)
 
+cat("Slope (β₁):", round(slope, 4), "# of genes per # of exonic mutations\n")
+cat("95% CI:", round(conf_int[2,1], 4), "to", round(conf_int[2,2], 4), "\n")
+cat("R²:", round(summary_stats$r.squared, 4), "\n")
+cat("p-value:", format.pval(summary_stats$coefficients[2,4]), "\n")
+abline(model, col = "red", lwd = 2)
 # Add R-squared value in top right
 r_squared <- summary(model)$r.squared
 text(

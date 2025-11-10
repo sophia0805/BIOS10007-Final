@@ -1,5 +1,6 @@
+rm(list = ls())
 # Load file with header
-rmsd <- read.delim("SRR701471.annovar.hg38_multianno.intronic.txt", sep = "\t", header = TRUE)
+rmsd <- read.delim("../data/SRR701471.annovar.hg38_multianno.intronic.txt", sep = "\t", header = TRUE)
 
 # Check column structure first
 print("Column names:")
@@ -65,7 +66,15 @@ text(gene_mutation_data$NumMutations, gene_mutation_data$NumGenes,
 # Add regression line
 model <- lm(NumGenes ~ NumMutations, data = gene_mutation_data)
 abline(model, col = "red", lwd = 2)
+summary_stats <- summary(model)
+slope <- coef(model)[2]
+conf_int <- confint(model, level = 0.95)
 
+cat("Slope (β₁):", round(slope, 4), "# of genes per # of intronic mutations\n")
+cat("95% CI:", round(conf_int[2,1], 4), "to", round(conf_int[2,2], 4), "\n")
+cat("R²:", round(summary_stats$r.squared, 4), "\n")
+cat("p-value:", format.pval(summary_stats$coefficients[2,4]), "\n")
+abline(model, col = "red", lwd = 2)
 # Add R-squared value
 r_squared <- summary(model)$r.squared
 text(

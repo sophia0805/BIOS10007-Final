@@ -1,5 +1,7 @@
+rm(list = ls())
+
 # Load file with header
-rmsd <- read.delim("SRR701471.annovar.hg38_multianno.txt", sep = "\t", header = TRUE)
+rmsd <- read.delim("../data/SRR701471.annovar.hg38_multianno.txt", sep = "\t", header = TRUE)
 
 # Define chromosome labels of interest (1–22 and X)
 chromosomes <- paste0("chr", c(1:22, "X"))
@@ -43,9 +45,17 @@ plot(
   ylim = c(0, max(bp_lengths$LastRowPosition) * 1.1)
 )
 
-
+# Statistics
 model <- lm(LastRowPosition ~ NumMutations, data = bp_lengths)
-abline(model, col = "red", lwd = 2)
+summary_stats <- summary(model)
+slope <- coef(model)[2]
+conf_int <- confint(model, level = 0.95)
+r_squared <- summary_stats$r.squared
+
+cat("Slope (β₁):", round(slope, 4), "chromosome length per number of mutations\n")
+cat("95% CI:", round(conf_int[2,1], 4), "to", round(conf_int[2,2], 4), "\n")
+cat("R²:", round(r_squared, 4), "\n")
+cat("p-value:", format.pval(summary_stats$coefficients[2,4]), "\n\n")
 
 # Calculate coefficient of determination
 r_squared <- summary(model)$r.squared

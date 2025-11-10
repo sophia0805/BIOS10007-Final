@@ -1,5 +1,6 @@
+rm(list = ls())
 # Load file with header
-rmsd <- read.delim("SRR701471.annovar.hg38_multianno.exonic.txt", sep = "\t", header = TRUE)
+rmsd <- read.delim("../data/SRR701471.annovar.hg38_multianno.exonic.txt", sep = "\t", header = TRUE)
 
 # Check column structure first
 print("Column names:")
